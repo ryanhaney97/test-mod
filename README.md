@@ -6,9 +6,13 @@ A basic test-mod that I use to make sure everything in [forge-clj](https://githu
 
 Mainly posted here to give people an idea of how coding with forge-clj will work.
 
+##Download
+
+- Version 0.2.0: [test-mod](http://bit.ly/1hrm1nS "test-mod Version 0.2.0")
+
 ##Changelog
 
-- Version 0.1.0: Initial Commit
+Go to forge-clj for the changelog. This is just an extension of it.
 
 ## License
 

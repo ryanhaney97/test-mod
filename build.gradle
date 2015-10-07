@@ -27,7 +27,7 @@ clojure.aotCompile = true
 
 apply plugin: 'forge'
 
-version = "0.1.0"
+version = ""
 group= "yoshiquest.testmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "testmod"
 
@@ -51,7 +51,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 	compile 'org.clojure:clojure:1.7.0'
-	compile files("forge_clj-1.0.jar")
+	compile files("forge_clj-dev.jar")
 
 }
 
