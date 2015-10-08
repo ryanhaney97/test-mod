@@ -1,11 +1,15 @@
 ;Declares the namespace, and includes forge-clj as a required library.
 (ns yoshiquest.testmod
-  (:require [forge-clj.core :refer :all]))
+  (:require
+   [forge-clj.core :refer :all])
+  (:import
+   [net.minecraft.creativetab CreativeTabs]
+   [net.minecraft.block Block]))
 
 ;Creates a simple test item, and adds it to the "misc" tab in creative mode.
 (defitem testitem
   :unlocalized-name "testitem"
-  :creative-tab (creative-tab :misc)
+  :creative-tab CreativeTabs/tabMisc
   :texture-name "test-mod:testitem")
 
 ;Creates a simple test block with a light level of 1.0, and adds it to the "block" tab in creative mode.
@@ -13,8 +17,8 @@
   :block-name "testblock"
   :override {:get-item-dropped (constantly testitem)}
   :hardness 0.5
-  :step-sound (step-sound :stone)
-  :creative-tab (creative-tab :block)
+  :step-sound Block/soundTypeStone
+  :creative-tab CreativeTabs/tabBlock
   :light-level (float 1.0)
   :block-texture-name "test-mod:testblock")
 
@@ -52,8 +56,8 @@
   :override {:register-block-icons register-multiblock-icons
              :get-icon get-multiblock-icon}
   :hardness 0.5
-  :step-sound (step-sound :stone)
-  :creative-tab (creative-tab :block)
+  :step-sound Block/soundTypeStone
+  :creative-tab CreativeTabs/tabBlock
   :block-texture-name "test-mod:multiblock")
 
 ;The following is a test to add a block with metadata to minecraft called metablock.
@@ -87,8 +91,8 @@
              :damage-dropped identity
              :get-sub-blocks metablock-sub-blocks}
   :hardness 0.5
-  :step-sound (step-sound :stone)
-  :creative-tab (creative-tab :block))
+  :step-sound Block/soundTypeStone
+  :creative-tab CreativeTabs/tabBlock)
 
 ;This creates the item version of the block. The metadata? tag will make it an ItemBlockWithMetadata rather than an
 ;ItemBlock. Since the name of the core block isn't changing, I simply used the name, an underscore,
@@ -141,7 +145,7 @@
   (register test-shovel "test-shovel")
   (register test-boots "test-boots")
   (register test-nom "test-nom")
-  (register-generator testgen)
+  (register testgen)
   (addrecipe testblock {:layout
                         "###
                         #_#
@@ -155,5 +159,5 @@
   (addsmelting testblock testitem 1.0))
 
 ;Creates the mod itself, passing in the common-init function as the initializing function for the mod's common proxy.
-(defmod yoshiquest.testmod test-mod "0.2.0"
+(defmod yoshiquest.testmod test-mod "0.2.1"
   :common {:init common-init})
