@@ -134,6 +134,36 @@
 ;The actual generator, passing in gen-testblock as the generation function.
 (defgenerate testgen :overworld gen-testblock)
 
+(deftileentity yoshiquest.testmod.tileentities tile-block-entity :expose {readFromNBT superReadFromNBT
+                                                                          writeToNBT superWriteToNBT})
+
+(def tile-block-data (atom {}))
+
+(defn tile-block-entity-readFromNBT [this compound]
+  (.superReadFromNBT this compound)
+  (read-tag-data! compound tile-block-data)
+  (println (str "\n\n" (get-data this tile-block-data) "\n\n"))
+  (swap-data! this tile-block-data (assoc (get-data this tile-block-data) :something true)))
+
+(defn tile-block-entity-writeToNBT [this compound]
+  (.superWriteToNBT this compound)
+  (write-tag-data! this compound tile-block-data))
+
+(defn new-tile-block-entity [world metadata]
+  (.newInstance tile-block-entity))
+
+(defblock tile-block
+  :block-name "tile-block"
+  :container? true
+  :override {:create-new-tile-entity new-tile-block-entity}
+  :hardness 0.5
+  :step-sound Block/soundTypeStone
+  :creative-tab CreativeTabs/tabBlock
+  :block-texture-name "test-mod:tile-block")
+
+(defn common-pre-init [this event]
+  (register-tile-entity tile-block-entity "test-mod-tile-block-entity"))
+
 ;Creates the initialization function for the mod itself, registering the previously defined blocks and items.
 ;Also adds a test recipe for testblock using testitem as an ingredient.
 ;Also registers the tool, armor, and generator previously defined.
@@ -145,6 +175,7 @@
   (register test-shovel "test-shovel")
   (register test-boots "test-boots")
   (register test-nom "test-nom")
+  (register tile-block "tile-block")
   (register testgen)
   (addrecipe testblock {:layout
                         "###
@@ -159,5 +190,6 @@
   (addsmelting testblock testitem 1.0))
 
 ;Creates the mod itself, passing in the common-init function as the initializing function for the mod's common proxy.
-(defmod yoshiquest.testmod test-mod "0.2.1"
-  :common {:init common-init})
+(defmod yoshiquest.testmod test-mod "0.2.2"
+  :common {:pre-init common-pre-init
+           :init common-init})
