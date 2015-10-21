@@ -74,7 +74,7 @@
    (get-metablock-icon side (.getBlockMetadata blockaccess arg1 arg2 arg3))))
 
 ;This adds a list of sub blocks to the provided list.
-(defn metablock-sub-blocks [item tab stacklist]
+(defn metablock-sub-blocks [item tab ^java.util.List stacklist]
   (let [meta-vals (range 6)
         istacks (map (partial itemstack item 1) meta-vals)
         addtolist (fn [istack]
@@ -134,35 +134,96 @@
 ;The actual generator, passing in gen-testblock as the generation function.
 (defgenerate testgen :overworld gen-testblock)
 
-(deftileentity yoshiquest.testmod.tileentities tile-block-entity :expose {readFromNBT superReadFromNBT
-                                                                          writeToNBT superWriteToNBT})
+;Creates a tile entity called "tile-block-entity" with a field named "something" with an initial value of "0".
+(deftileentity yoshiquest.testmod.tileentities tile-block-entity :fields {:something 0})
 
-(def tile-block-data (atom {}))
-
-(defn tile-block-entity-readFromNBT [this compound]
-  (.superReadFromNBT this compound)
-  (read-tag-data! compound tile-block-data)
-  (println (str "\n\n" (get-data this tile-block-data) "\n\n"))
-  (swap-data! this tile-block-data (assoc (get-data this tile-block-data) :something true)))
-
-(defn tile-block-entity-writeToNBT [this compound]
-  (.superWriteToNBT this compound)
-  (write-tag-data! this compound tile-block-data))
-
+;Creates a new instance of tile-block-entity.
 (defn new-tile-block-entity [world metadata]
-  (.newInstance tile-block-entity))
+  (.newInstance ^Class tile-block-entity))
 
+;Called on right click. Gets the tile entity at the position, prints the value of the "something" field, and
+;increases the "something" field by one.
+(defn on-tile-block-click [world x y z player _ _ _ _]
+  (when (not (remote? world))
+    (let [tile-entity (get-tile-entity-at world x y z)]
+      (println (str "Something: " (:something tile-entity)))
+      (assoc! tile-entity :something (inc (:something tile-entity)))))
+  false)
+
+;Makes a block container with the tile-block-entity as the tile entity it uses.
 (defblock tile-block
   :block-name "tile-block"
   :container? true
-  :override {:create-new-tile-entity new-tile-block-entity}
+  :override {:create-new-tile-entity new-tile-block-entity
+             :on-block-activated on-tile-block-click}
   :hardness 0.5
   :step-sound Block/soundTypeStone
   :creative-tab CreativeTabs/tabBlock
   :block-texture-name "test-mod:tile-block")
 
+;Called on the server upon receiving a packet from the client, printing out the received value.
+(defn on-server-packet [nbt-map context]
+  (println (str "Server: " nbt-map)))
+
+;Future declaration for the network created in the pre-init function.
+(declare test-mod-server-network)
+
+;Creates a packet handler named "test-mod-server-network-handler" (what a mouthfull), providing on-server-packet
+;as the event called upon receiving a packet.
+(gen-packet-handler yoshiquest.testmod test-mod-server-network-handler on-server-packet)
+
+;Right click function for the net-test item. Simply sends a message to the server.
+(defn right-click-send [istack world player]
+  (if (remote? world)
+    (send-to-server test-mod-server-network {:message "Hello World"}))
+  istack)
+
+;Test item to test the network system.
+(defitem net-test
+  :unlocalized-name "net-test"
+  :creative-tab CreativeTabs/tabMisc
+  :override {:on-item-right-click right-click-send})
+
+;Creates an event handler with the PlayerPickupXpEvent, and the EntityConstructing event.
+;The full package names are required.
+(gen-events yoshiquest.testmod common-event-handler
+            :xpEvent {:event net.minecraftforge.event.entity.player.PlayerPickupXpEvent}
+            :entityConstructingEvent {:event net.minecraftforge.event.entity.EntityEvent$EntityConstructing})
+
+;Fires on the PlayerPickupXpEvent, and therefore prints out "Event!" when the player picks up experience.
+(defn common-event-handler-xpEvent [this event]
+  (println "Event!"))
+
+;Creates extended properties called test-properties with the field "tacopower"
+;(it was the first thing that popped into my head ok), which is initially set to "0".
+(defextendedproperties yoshiquest.testmod test-properties :fields {:tacopower 0})
+
+;Fires on the EntityConstructing event, initializing the new properties for each player.
+(defn common-event-handler-entityConstructingEvent [this ^net.minecraftforge.event.entity.EntityEvent$EntityConstructing event]
+  (let [entity (.-entity event)]
+    (when (and (instance? net.minecraft.entity.player.EntityPlayer entity) (nil? (.getExtendedProperties entity "test-properties")))
+      (register-extended-properties entity "test-properties" (.newInstance ^Class test-properties)))))
+
+;Right click function for testing the extended entity properties. Prints out the current "tacopower",
+;and increases it by 1.
+(defn right-click-property [istack world player]
+  (when (not (remote? world))
+    (let [test-properties (get-extended-properties player "test-properties")]
+      (println (str "Tacopower: " (:tacopower test-properties)))
+      (assoc! test-properties :tacopower (inc (:tacopower test-properties)))))
+  istack)
+
+;Creates an item to test extended entity properties.
+(defitem property-test
+  :unlocalized-name "property-test"
+  :creative-tab CreativeTabs/tabMisc
+  :override {:on-item-right-click right-click-property})
+
+;Pre-init function, registers a tile entity, defines a new network with id "test-net", and registers a new message for the network.
 (defn common-pre-init [this event]
-  (register-tile-entity tile-block-entity "test-mod-tile-block-entity"))
+  (register-tile-entity tile-block-entity "test-mod-tile-block-entity")
+  (def test-mod-server-network (create-network "test-net"))
+  (register-message test-mod-server-network test-mod-server-network-handler 0 :server))
 
 ;Creates the initialization function for the mod itself, registering the previously defined blocks and items.
 ;Also adds a test recipe for testblock using testitem as an ingredient.
@@ -176,7 +237,10 @@
   (register test-boots "test-boots")
   (register test-nom "test-nom")
   (register tile-block "tile-block")
+  (register net-test "net-test")
+  (register property-test "property-test")
   (register testgen)
+  (register-events common-event-handler)
   (addrecipe testblock {:layout
                         "###
                         #_#
@@ -190,6 +254,6 @@
   (addsmelting testblock testitem 1.0))
 
 ;Creates the mod itself, passing in the common-init function as the initializing function for the mod's common proxy.
-(defmod yoshiquest.testmod test-mod "0.2.2"
+(defmod yoshiquest.testmod test-mod "0.3.0"
   :common {:pre-init common-pre-init
            :init common-init})
