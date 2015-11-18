@@ -1,6 +1,6 @@
-(ns yoshiquest.test-mod.renderers.render-block-renderer
+(ns yoshiquest.test-mod.client.renderers.render-block-renderer
   (:require
-   [forge-clj.renderer :refer [deftilerenderer]]
+   [forge-clj.client.renderer :refer [deftilerenderer]]
    [forge-clj.util :refer [defmemo abs]]))
 
 (defn within [value small big]

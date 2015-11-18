@@ -2,10 +2,10 @@
   (:require
    [forge-clj.blocks :refer [defblock defblockitem]]
    [forge-clj.tileentity :refer [get-tile-entity-at]]
-   [forge-clj.util :refer [remote? itemstack deftab]]
+   [forge-clj.util :refer [remote? itemstack printchat drop-items]]
    [yoshiquest.test-mod.items :refer [test-item]]
    [yoshiquest.test-mod.tab :refer [tab-test-mod]]
-   [yoshiquest.test-mod.tileentities :refer [new-tile-block-entity new-render-block-entity]])
+   [yoshiquest.test-mod.tileentities :refer [new-tile-block-entity new-render-block-entity new-test-model-entity new-test-inventory-entity]])
   (:import
    [net.minecraft.block Block]))
 
@@ -107,8 +107,8 @@
 (defn on-tile-block-click [world x y z player _ _ _ _]
   (when (not (remote? world))
     (let [tile-entity (get-tile-entity-at world x y z)]
-      (println (str "Something: " (:something tile-entity)))
-      (assoc! tile-entity :something (inc (:something tile-entity)))))
+      (printchat player (str "Something: " (:something tile-entity) " of Type: " (type (:something tile-entity))))
+      (assoc! tile-entity :something (itemstack test-block 10))))
   false)
 
 ;Makes a block container with the tile-block-entity as the tile entity it uses.
@@ -134,5 +134,29 @@
              :on-block-placed-by store-rotation}
   :hardness 0.5
   :light-opacity 0
+  :step-sound Block/soundTypeStone
+  :creative-tab tab-test-mod)
+
+(defblock test-model
+  :block-name "test-model"
+  :container? true
+  :override {:create-new-tile-entity new-test-model-entity
+             :is-opaque-cube (constantly false)
+             :render-as-normal-block (constantly false)
+             :get-render-type (constantly -1)}
+  :hardness 0.5
+  :light-opacity 0
+  :step-sound Block/soundTypeStone
+  :creative-tab tab-test-mod)
+
+(defblock test-inventory
+  :block-name "test-inventory"
+  :container? true
+  :override {:create-new-tile-entity new-test-inventory-entity
+             :break-block (fn [world x y z par5 par6]
+                            (drop-items world x y z)
+                            (let [this ^Block this]
+                              (proxy-super breakBlock world x y z par5 par6)))}
+  :hardness 0.5
   :step-sound Block/soundTypeStone
   :creative-tab tab-test-mod)

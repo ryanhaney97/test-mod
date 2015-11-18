@@ -1,13 +1,15 @@
 (ns yoshiquest.test-mod.network
   (:require
-   [forge-clj.network :refer [gen-packet-handler create-network register-message]]))
+   [forge-clj.network :refer [gen-packet-handler create-network register-message]]
+   [forge-clj.util :refer [printchat]]))
 
 ;Future declaration for the network created in the pre-init function.
 (declare test-mod-server-network)
 
 ;Called on the server upon receiving a packet from the client, printing out the received value.
 (defn on-server-packet [nbt-map context]
-  (println (str "Server: " nbt-map)))
+  (let [player (.-playerEntity (.getServerHandler ^cpw.mods.fml.common.network.simpleimpl.MessageContext context))]
+    (printchat player (str "Server: " nbt-map))))
 
 ;Creates a packet handler named "test-mod-server-network-handler" (what a mouthfull), providing on-server-packet
 ;as the event called upon receiving a packet.

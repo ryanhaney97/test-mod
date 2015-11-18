@@ -3,7 +3,7 @@
    [forge-clj.items :refer [defitem deftoolmaterial defarmormaterial deftool defarmor deffood]]
    [forge-clj.entity :refer [get-extended-properties]]
    [forge-clj.network :refer [send-to-server]]
-   [forge-clj.util :refer [remote?]]
+   [forge-clj.util :refer [remote? printchat]]
    [yoshiquest.test-mod.network :refer [test-mod-server-network]]
    [yoshiquest.test-mod.tab :refer [tab-test-mod]]))
 
@@ -29,7 +29,7 @@
 (defn right-click-property [istack world player]
   (when (not (remote? world))
     (let [test-properties (get-extended-properties player "test-properties")]
-      (println (str "Tacopower: " (:tacopower test-properties)))
+      (printchat player (str "Tacopower: " (:tacopower test-properties)))
       (assoc! test-properties :tacopower (inc (:tacopower test-properties)))))
   istack)
 
