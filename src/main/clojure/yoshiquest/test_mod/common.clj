@@ -2,16 +2,19 @@
   (:require
    [forge-clj.core :refer [register register-tile-entity register-events]]
    [forge-clj.recipe :refer [addrecipe addsmelting]]
+   [forge-clj.ui :refer [register-gui-handler]]
    [yoshiquest.test-mod.network :refer [init-network]]
-   [yoshiquest.test-mod.blocks :refer [test-block multiblock metablock metablockitem tile-block render-block test-model test-inventory]]
+   [yoshiquest.test-mod.blocks :refer [test-block multiblock metablock metablockitem tile-block render-block test-model test-inventory mod-instance]]
    [yoshiquest.test-mod.items :refer [test-item test-shovel test-boots test-nom net-test property-test]]
    [yoshiquest.test-mod.events :refer [common-event-handler]]
    [yoshiquest.test-mod.tileentities :refer [tile-block-entity render-block-entity test-model-entity test-inventory-entity]]
    [yoshiquest.test-mod.world :refer [test-gen]]
+   [yoshiquest.test-mod.ui :refer [test-mod-gui-handler]]
    [clojure.java.io :as io]))
 
 ;Pre-init function, registers a tile entity, defines a new network with id "test-net", and registers a new message for the network.
 (defn common-pre-init [this event]
+  (reset! mod-instance this)
   (register-tile-entity tile-block-entity "test-mod-tile-block-entity")
   (register-tile-entity render-block-entity "test-mod-render-block-entity")
   (register-tile-entity test-model-entity "test-mod-test-model-entity")
@@ -37,6 +40,7 @@
   (register test-inventory "test-inventory")
   (register test-gen)
   (register-events common-event-handler)
+  (register-gui-handler this test-mod-gui-handler)
   (addrecipe test-block {:layout
                         "###
                         #_#
