@@ -8,6 +8,8 @@ Mainly posted here to give people an idea of how coding with forge-clj will work
 
 ##Downloads
 
+- Version 0.5.0: [test-mod](http://bit.ly/1GREeYc "test-mod Version 0.5.0")
+
 - Version 0.4.1: [test-mod](http://bit.ly/1YgDrUN "test-mod Version 0.4.1")
 
 - Version 0.4.0: [test-mod](http://bit.ly/1GREpCR "test-mod Version 0.4.0")

@@ -2,7 +2,8 @@
   (:require
    [forge-clj.blocks :refer [defblock defblockitem]]
    [forge-clj.tileentity :refer [get-tile-entity-at]]
-   [forge-clj.util :refer [remote? itemstack printchat drop-items]]
+   [forge-clj.ui :refer [open-gui]]
+   [forge-clj.util :refer [remote? itemstack deftab printchat drop-items]]
    [yoshiquest.test-mod.items :refer [test-item]]
    [yoshiquest.test-mod.tab :refer [tab-test-mod]]
    [yoshiquest.test-mod.tileentities :refer [new-tile-block-entity new-render-block-entity new-test-model-entity new-test-inventory-entity]])
@@ -107,8 +108,8 @@
 (defn on-tile-block-click [world x y z player _ _ _ _]
   (when (not (remote? world))
     (let [tile-entity (get-tile-entity-at world x y z)]
-      (printchat player (str "Something: " (:something tile-entity) " of Type: " (type (:something tile-entity))))
-      (assoc! tile-entity :something (itemstack test-block 10))))
+      (printchat player (str "Something: " (:something tile-entity)))
+      (assoc! tile-entity :something (inc (:something tile-entity)))))
   false)
 
 ;Makes a block container with the tile-block-entity as the tile entity it uses.
@@ -149,6 +150,13 @@
   :step-sound Block/soundTypeStone
   :creative-tab tab-test-mod)
 
+(def mod-instance (atom nil))
+
+(defn open-test-inventory-gui [world x y z player _ _ _ _]
+  (if (not (remote? world))
+    (open-gui player (deref mod-instance) 0 world x y z))
+  true)
+
 (defblock test-inventory
   :block-name "test-inventory"
   :container? true
@@ -156,7 +164,8 @@
              :break-block (fn [world x y z par5 par6]
                             (drop-items world x y z)
                             (let [this ^Block this]
-                              (proxy-super breakBlock world x y z par5 par6)))}
+                              (proxy-super breakBlock world x y z par5 par6)))
+             :on-block-activated open-test-inventory-gui}
   :hardness 0.5
   :step-sound Block/soundTypeStone
   :creative-tab tab-test-mod)

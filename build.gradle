@@ -52,7 +52,7 @@ dependencies {
 
 	compile 'org.clojure:clojure:1.7.0'
 	compile files("forge_clj-dev.jar")
-
+	compile 'org.clojure:tools.nrepl:0.2.11'
 }
 
 processResources
