@@ -10,7 +10,7 @@
 
 ;Creates a tile entity called "tile-block-entity" with a field named "something" with an initial value of "0".
 (deftileentity yoshiquest.test-mod.tileentities tile-block-entity
-  :fields {:something (itemstack (get-block "test-mod:test-block"))})
+  :fields {:something 0})
 
 ;Creates a new instance of tile-block-entity.
 (defn new-tile-block-entity [world metadata]

@@ -108,8 +108,8 @@
 (defn on-tile-block-click [world x y z player _ _ _ _]
   (when (not (remote? world))
     (let [tile-entity (get-tile-entity-at world x y z)]
-      (printchat player (str "Something: " (:something tile-entity) " of Type: " (type (:something tile-entity))))
-      (assoc! tile-entity :something (itemstack test-block 10))))
+      (printchat player (str "Something: " (:something tile-entity)))
+      (assoc! tile-entity :something (inc (:something tile-entity)))))
   false)
 
 ;Makes a block container with the tile-block-entity as the tile entity it uses.

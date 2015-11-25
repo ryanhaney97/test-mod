@@ -9,8 +9,7 @@
    [yoshiquest.test-mod.events :refer [common-event-handler]]
    [yoshiquest.test-mod.tileentities :refer [tile-block-entity render-block-entity test-model-entity test-inventory-entity]]
    [yoshiquest.test-mod.world :refer [test-gen]]
-   [yoshiquest.test-mod.ui :refer [test-mod-gui-handler]]
-   [clojure.java.io :as io]))
+   [yoshiquest.test-mod.ui :refer [test-mod-gui-handler]]))
 
 ;Pre-init function, registers a tile entity, defines a new network with id "test-net", and registers a new message for the network.
 (defn common-pre-init [this event]
