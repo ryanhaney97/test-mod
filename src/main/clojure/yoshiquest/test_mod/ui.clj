@@ -1,8 +1,7 @@
 (ns yoshiquest.test-mod.ui
   (:require
-   [forge-clj.ui :refer [defguihandler defcontainer]]
-   [forge-clj.tileentity :refer [get-tile-entity-at]]
-   [forge-clj.util :refer [construct]])
+   [forge-clj.ui :refer [defcontainer defguihandler]]
+   [forge-clj.util :refer [construct with-prefix get-tile-entity-at]])
   (:import
    [net.minecraft.entity.player EntityPlayer]
    [net.minecraft.inventory Container Slot]
@@ -20,24 +19,25 @@
   :player-inventory? true
   :slots slots)
 
-(defn test-container-transferStackInSlot [^TestContainer this ^EntityPlayer player slot-index]
-  (let [^Slot slot (.get ^java.util.List (.-inventorySlots this) slot-index)]
-    (if (and slot (.getHasStack slot))
-      (let [^ItemStack istack (.getStack slot)
-            ^ItemStack prev (.copy istack)]
-        (when (< slot-index 9)
-          (.mergeItemStack this istack 9 45 true))
-        (when (>= slot-index 9)
-          (.mergeItemStack this istack 0 9 false))
-        (if (= (.-stackSize istack) 0)
-          (.putStack slot nil)
-          (.onSlotChanged slot))
-        (when (not= (.-stackSize istack) (.-stackSize prev))
-          (.onPickupFromSlot slot player istack)
-          prev)))))
+(with-prefix test-container-
+  (defn transferStackInSlot [^TestContainer this ^EntityPlayer player slot-index]
+    (let [^Slot slot (.get ^java.util.List (.-inventorySlots this) slot-index)]
+      (if (and slot (.getHasStack slot))
+        (let [^ItemStack istack (.getStack slot)
+              ^ItemStack prev (.copy istack)]
+          (when (< slot-index 9)
+            (.mergeItemStack this istack 9 45 true))
+          (when (>= slot-index 9)
+            (.mergeItemStack this istack 0 9 false))
+          (if (= (.-stackSize istack) 0)
+            (.putStack slot nil)
+            (.onSlotChanged slot))
+          (when (not= (.-stackSize istack) (.-stackSize prev))
+            (.onPickupFromSlot slot player istack)
+            prev)))))
 
-(defn test-container-canInteractWith [^TestContainer this player]
-  true)
+  (defn canInteractWith [^TestContainer this player]
+    true))
 
 (defn get-server-gui [id ^EntityPlayer player world x y z]
   (if (get-tile-entity-at world x y z)

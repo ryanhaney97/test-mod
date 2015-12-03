@@ -1,6 +1,6 @@
 (ns yoshiquest.test-mod.client
   (:require
-   [forge-clj.client.renderer :refer [bind-tile-renderer]]
+   [forge-clj.client.registry :refer [bind-tile-renderer]]
    [yoshiquest.test-mod.tileentities :refer [render-block-entity test-model-entity]]
    [yoshiquest.test-mod.client.ui :refer [init-client-gui]]
    [yoshiquest.test-mod.client.renderers.render-block-renderer :refer [render-block-tile-renderer]]
