@@ -1,8 +1,7 @@
 (ns yoshiquest.test-mod.common
   (:require
-   [forge-clj.core :refer [register register-tile-entity register-events]]
+   [forge-clj.registry :refer [register register-tile-entity register-events register-gui-handler]]
    [forge-clj.recipe :refer [addrecipe addsmelting]]
-   [forge-clj.ui :refer [register-gui-handler]]
    [yoshiquest.test-mod.network :refer [init-network]]
    [yoshiquest.test-mod.blocks :refer [test-block multiblock metablock metablockitem tile-block render-block test-model test-inventory mod-instance]]
    [yoshiquest.test-mod.items :refer [test-item test-shovel test-boots test-nom net-test property-test]]

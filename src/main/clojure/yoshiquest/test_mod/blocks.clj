@@ -1,9 +1,7 @@
 (ns yoshiquest.test-mod.blocks
   (:require
    [forge-clj.blocks :refer [defblock defblockitem]]
-   [forge-clj.tileentity :refer [get-tile-entity-at]]
-   [forge-clj.ui :refer [open-gui]]
-   [forge-clj.util :refer [remote? itemstack deftab printchat drop-items]]
+   [forge-clj.util :refer [remote? itemstack printchat drop-items get-tile-entity-at open-gui]]
    [yoshiquest.test-mod.items :refer [test-item]]
    [yoshiquest.test-mod.tab :refer [tab-test-mod]]
    [yoshiquest.test-mod.tileentities :refer [new-tile-block-entity new-render-block-entity new-test-model-entity new-test-inventory-entity]])

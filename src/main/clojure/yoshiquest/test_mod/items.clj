@@ -1,9 +1,8 @@
 (ns yoshiquest.test-mod.items
   (:require
    [forge-clj.items :refer [defitem deftoolmaterial defarmormaterial deftool defarmor deffood]]
-   [forge-clj.entity :refer [get-extended-properties]]
    [forge-clj.network :refer [send-to-server]]
-   [forge-clj.util :refer [remote? printchat]]
+   [forge-clj.util :refer [remote? printchat get-extended-properties]]
    [yoshiquest.test-mod.network :refer [test-mod-server-network]]
    [yoshiquest.test-mod.tab :refer [tab-test-mod]]))
 
