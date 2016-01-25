@@ -5,7 +5,7 @@
    [forge-clj.client.util :refer [bind-texture set-gl-color]]
    [yoshiquest.test-mod.ui :refer [get-client-gui get-server-gui]]))
 
-(defguicontainer yoshiquest.test-mod.client.ui test-gui-container
+(defguicontainer test-gui-container
   :expose-fields {guiLeft {:get getGuiLeft}
                   guiTop {:get getGuiTop}
                   xSize {:get getXSize}

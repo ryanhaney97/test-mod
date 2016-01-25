@@ -7,7 +7,7 @@
    [yoshiquest.test-mod.tab :refer [tab-test-mod]]))
 
 (defitem test-item
-  :unlocalized-name "testitem"
+  :unlocalized-name "test-item"
   :creative-tab tab-test-mod
   :texture-name "test-mod:test-item")
 

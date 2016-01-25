@@ -13,10 +13,21 @@
   :block-name "test-block"
   :override {:get-item-dropped (constantly test-item)}
   :hardness 0.5
-  :step-sound Block/soundTypeStone
   :creative-tab tab-test-mod
   :light-level (float 1.0)
+  :step-sound Block/soundTypeStone
   :block-texture-name "test-mod:test-block")
+
+;Was used to test the class generation version of defobj and variants.
+;(defblock test-block
+;  :block-name "test-block"
+;  :override {:get-item-dropped (constantly test-item)}
+;  :hardness 0.5
+;  :creative-tab tab-test-mod
+;  :light-level (float 1.0)
+;  :step-sound Block/soundTypeStone
+;  :fields {:texture-name "test-mod:test-block"}
+;  :class true)
 
 ;The following creates another test block, this time with a different texture on each side.
 ;This stores the icons in the "icons" atom, registers them with the register-multiblock-icons function,

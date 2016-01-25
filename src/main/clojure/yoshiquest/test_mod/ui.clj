@@ -14,7 +14,7 @@
                        y (range 3)]
                    [(+ x (* y 3)) (+ (* x 18) 62) (+ (* y 18) 17)])))
 
-(defcontainer yoshiquest.test-mod.ui test-container
+(defcontainer test-container
   :player-hotbar? true
   :player-inventory? true
   :slots slots)
