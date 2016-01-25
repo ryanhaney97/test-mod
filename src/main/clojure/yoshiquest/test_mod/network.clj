@@ -13,7 +13,7 @@
 
 ;Creates a packet handler named "test-mod-server-network-handler" (what a mouthfull), providing on-server-packet
 ;as the event called upon receiving a packet.
-(gen-packet-handler yoshiquest.test-mod.network test-mod-server-network-handler on-server-packet)
+(gen-packet-handler test-mod-server-network-handler on-server-packet)
 
 (defn init-network []
   (def test-mod-server-network (create-network "test-net"))

@@ -9,14 +9,14 @@
    [net.minecraft.tileentity TileEntity]))
 
 ;Creates a tile entity called "tile-block-entity" with a field named "something" with an initial value of "0".
-(deftileentity yoshiquest.test-mod.tileentities tile-block-entity
+(deftileentity tile-block-entity
   :fields {:something 0})
 
 ;Creates a new instance of tile-block-entity.
 (defn new-tile-block-entity [world metadata]
   (.newInstance ^Class tile-block-entity))
 
-(deftileentity yoshiquest.test-mod.tileentities render-block-entity
+(deftileentity render-block-entity
   :fields {:rotation 0
            :yaw 0
            :pitch 0}
@@ -31,12 +31,12 @@
 (defn new-render-block-entity [world & args]
   (.newInstance ^Class render-block-entity))
 
-(deftileentity yoshiquest.test-mod.tileentities test-model-entity)
+(deftileentity test-model-entity)
 
 (defn new-test-model-entity [& args]
   (.newInstance ^Class test-model-entity))
 
-(deftileentity yoshiquest.test-mod.tileentities test-inventory-entity
+(deftileentity test-inventory-entity
   :interfaces [net.minecraft.inventory.IInventory]
   :fields {:inv (into [] (repeat 9 nil))})
 

@@ -9,7 +9,7 @@
 
 ;Creates an event handler with the PlayerPickupXpEvent, and the EntityConstructing event.
 ;The full package names are required if not using a forge or fml event.
-(gen-events yoshiquest.test-mod.events common-event-handler
+(gen-events common-event-handler
             :xpEvent {:event :player-pickup-xp-event}
             :entityConstructingEvent {:event :entity-event.entity-constructing})
 
