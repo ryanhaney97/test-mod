@@ -4,10 +4,14 @@ LICENSE-fml.txt
 MinecraftForge-Credits.txt
 MinecraftForge-License.txt
 eclipse/
-forge-1.7.10-10.13.4.1448-1.7.10-changelog.txt
 gradle/
 gradlew
 gradlew.bat
 logs/
-update-minecraft
-forge_clj-dev.jar
+forge_clj.jar
+/forge-1.8.9-11.15.1.1722-changelog.txt
+/Paulscode IBXM Library License.txt
+/Paulscode SoundSystem CodecIBXM License.txt
+/test-mod.ipr
+/update-environment.sh
+/test-mod.iml
