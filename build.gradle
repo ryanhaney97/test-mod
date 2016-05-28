@@ -58,7 +58,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 	compile 'org.clojure:clojure:1.8.0'
-	compile files("forge_clj.jar")
+	compile files("forge_clj-dev.jar")
 }
 
 jar {
