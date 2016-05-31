@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "color=red,facing=up": { "model": "test-mod:facing-meta-block-red-up" },
+    "color=red,facing=down": { "model": "test-mod:facing-meta-block-red-down" },
+    "color=green,facing=up": { "model": "test-mod:facing-meta-block-green-up" },
+    "color=green,facing=down": { "model": "test-mod:facing-meta-block-green-down" }
+  }
+}

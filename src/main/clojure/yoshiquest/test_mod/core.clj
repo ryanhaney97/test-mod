@@ -1,7 +1,8 @@
 (ns yoshiquest.test-mod.core
   (:require
     [forge-clj.core :refer [defmod]]
-    [yoshiquest.test-mod.client]))
+    ;[yoshiquest.test-mod.client]
+    ))
 
 (defmod test-mod "0.6.0"
         :common {:init yoshiquest.test-mod.common/common-init}
