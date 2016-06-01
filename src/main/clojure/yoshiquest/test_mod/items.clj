@@ -1,12 +1,12 @@
 (ns yoshiquest.test-mod.items
   (:require
     [forge-clj.items :refer [defitem deftool defarmor deffood]]
-    [forge-clj.util :refer [remote?]])
+    [forge-clj.util :refer [remote?]]
+    [forge-clj.network :refer [send-to-server]]
+    [yoshiquest.test-mod.network :refer [test-mod-server-network]])
   (:import
     [net.minecraft.creativetab CreativeTabs]
-    [net.minecraft.item ItemFood]
-    [net.minecraft.entity.player EntityPlayer]
-    [net.minecraft.potion Potion PotionEffect]))
+    [net.minecraft.potion Potion]))
 
 (defitem test-item
          :creative-tab CreativeTabs/tabMisc)
@@ -30,3 +30,14 @@
 
 (deffood test-food 4 0.7
          :potion-effect [(.-id Potion/confusion) 20 0 1.0])
+
+;Right click function for the net-test item. Simply sends a message to the server.
+(defn right-click-send [istack world player]
+  (if (remote? world)
+    (send-to-server test-mod-server-network {:message "Hello World"}))
+  istack)
+
+;Test item to test the network system.
+(defitem net-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-send})
