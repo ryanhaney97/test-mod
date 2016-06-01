@@ -1,8 +1,12 @@
 (ns yoshiquest.test-mod.items
   (:require
-    [forge-clj.items :refer [defitem deftool defarmor deffood]])
+    [forge-clj.items :refer [defitem deftool defarmor deffood]]
+    [forge-clj.util :refer [remote?]])
   (:import
-    [net.minecraft.creativetab CreativeTabs]))
+    [net.minecraft.creativetab CreativeTabs]
+    [net.minecraft.item ItemFood]
+    [net.minecraft.entity.player EntityPlayer]
+    [net.minecraft.potion Potion PotionEffect]))
 
 (defitem test-item
          :creative-tab CreativeTabs/tabMisc)
@@ -24,4 +28,5 @@
 
 (defarmor test-boots :boots (assoc test-material :durability 10))
 
-(deffood test-food 4 0.7)
+(deffood test-food 4 0.7
+         :potion-effect [(.-id Potion/confusion) 20 0 1.0])

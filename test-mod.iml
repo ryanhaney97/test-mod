@@ -818,5 +818,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="forge_clj-dev" level="project" />
   </component>
 </module>
