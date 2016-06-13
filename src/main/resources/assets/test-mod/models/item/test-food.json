@@ -1,7 +1,7 @@
 {
   "parent":"builtin/generated",
   "textures": {
-    "layer0":"test-mod:items/gay-weed"
+    "layer0":"test-mod:items/test-item"
   },
   "display": {
     "thirdperson": {
