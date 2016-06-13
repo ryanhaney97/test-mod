@@ -1,7 +1,7 @@
 (ns yoshiquest.test-mod.items
   (:require
     [forge-clj.items :refer [defitem deftool defarmor deffood]]
-    [forge-clj.util :refer [remote?]]
+    [forge-clj.util :refer [remote? get-extended-properties printchat]]
     [forge-clj.network :refer [send-to-server]]
     [yoshiquest.test-mod.network :refer [test-mod-server-network]])
   (:import
@@ -41,3 +41,17 @@
 (defitem net-test
          :creative-tab CreativeTabs/tabMisc
          :override {:on-item-right-click right-click-send})
+
+;Right click function for testing the extended entity properties. Prints out the current "tacopower",
+;and increases it by 1.
+(defn right-click-property [istack world player]
+  (when (not (remote? world))
+    (let [test-properties (get-extended-properties player "test-properties")]
+      (printchat player (str "Tacopower: " (:tacopower test-properties)))
+      (assoc! test-properties :tacopower (inc (:tacopower test-properties)))))
+  istack)
+
+;Creates an item to test extended entity properties.
+(defitem property-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-property})
