@@ -8,7 +8,7 @@
 
 ;Called on the server upon receiving a packet from the client, printing out the received value.
 (defn on-server-packet [nbt-map context]
-  (let [player (.-playerEntity (.getServerHandler ^cpw.mods.fml.common.network.simpleimpl.MessageContext context))]
+  (let [player (.-playerEntity (.getServerHandler ^net.minecraftforge.fml.common.network.simpleimpl.MessageContext context))]
     (printchat player (str "Server: " nbt-map))))
 
 ;Creates a packet handler named "test-mod-server-network-handler" (what a mouthfull), providing on-server-packet

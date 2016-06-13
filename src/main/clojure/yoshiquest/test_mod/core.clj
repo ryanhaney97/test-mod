@@ -1,11 +1,10 @@
 (ns yoshiquest.test-mod.core
   (:require
-   [forge-clj.core :refer [defmod]]))
+    [forge-clj.core :refer [defmod]]))
 
-;Creates the mod itself, passing in the common-init function as the initializing function for the mod's common proxy.
-(defmod test-mod "0.5.2"
-  :common {:init yoshiquest.test-mod.common/common-init
-           :pre-init yoshiquest.test-mod.common/common-pre-init}
-  :client {:init yoshiquest.test-mod.client/client-init}
-  ;:repl true
-  )
+
+(defmod test-mod "0.6.0"
+        :common {:pre-init yoshiquest.test-mod.common/common-pre-init
+                 :init yoshiquest.test-mod.common/common-init}
+        :client {:pre-init yoshiquest.test-mod.client/client-pre-init
+                 :init yoshiquest.test-mod.client/client-init})

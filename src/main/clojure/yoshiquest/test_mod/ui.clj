@@ -4,7 +4,7 @@
    [forge-clj.util :refer [construct with-prefix get-tile-entity-at]])
   (:import
    [net.minecraft.entity.player EntityPlayer]
-   [net.minecraft.inventory Container Slot]
+   [net.minecraft.inventory Slot]
    [net.minecraft.item ItemStack]))
 
 (def get-client-gui (atom (constantly nil)))

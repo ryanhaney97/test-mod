@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "test-mod:blocks/test-block",
+    "bottom": "test-mod:blocks/multiblock_1",
+    "side": "test-mod:blocks/multiblock_1"
+  }
+}

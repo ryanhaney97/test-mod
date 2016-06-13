@@ -1,15 +1,35 @@
 (ns yoshiquest.test-mod.items
   (:require
-   [forge-clj.items :refer [defitem deftoolmaterial defarmormaterial deftool defarmor deffood]]
-   [forge-clj.network :refer [send-to-server]]
-   [forge-clj.util :refer [remote? printchat get-extended-properties]]
-   [yoshiquest.test-mod.network :refer [test-mod-server-network]]
-   [yoshiquest.test-mod.tab :refer [tab-test-mod]]))
+    [forge-clj.items :refer [defitem deftool defarmor deffood]]
+    [forge-clj.util :refer [remote? get-extended-properties printchat]]
+    [forge-clj.network :refer [send-to-server]]
+    [yoshiquest.test-mod.network :refer [test-mod-server-network]])
+  (:import
+    [net.minecraft.creativetab CreativeTabs]
+    [net.minecraft.potion Potion]))
 
 (defitem test-item
-  :unlocalized-name "test-item"
-  :creative-tab tab-test-mod
-  :texture-name "test-mod:test-item")
+         :creative-tab CreativeTabs/tabMisc)
+
+(def test-material
+  {:name             "test-material"
+   :texture-name     "test-mod:test-material"
+   :harvest-level    1
+   :durability       100
+   :mining-speed     4
+   :damage           0
+   :enchantability   10
+   :damage-reduction {:helmet     5
+                      :chestplate 7
+                      :leggings   4
+                      :boots      3}})
+
+(deftool test-shovel :shovel test-material)
+
+(defarmor test-boots :boots (assoc test-material :durability 10))
+
+(deffood test-food 4 0.7
+         :potion-effect [(.-id Potion/confusion) 20 0 1.0])
 
 ;Right click function for the net-test item. Simply sends a message to the server.
 (defn right-click-send [istack world player]
@@ -19,9 +39,8 @@
 
 ;Test item to test the network system.
 (defitem net-test
-  :unlocalized-name "net-test"
-  :creative-tab tab-test-mod
-  :override {:on-item-right-click right-click-send})
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-send})
 
 ;Right click function for testing the extended entity properties. Prints out the current "tacopower",
 ;and increases it by 1.
@@ -34,30 +53,5 @@
 
 ;Creates an item to test extended entity properties.
 (defitem property-test
-  :unlocalized-name "property-test"
-  :creative-tab tab-test-mod
-  :override {:on-item-right-click right-click-property})
-
-;Defines a tool material with the name testite and its respective properties.
-(deftoolmaterial testite 3 1000 15.0 4.0 30)
-
-;Creates a shovel using the testite material.
-(deftool test-shovel testite :shovel
-  :unlocalized-name "test-shovel"
-  :creative-tab tab-test-mod)
-
-;Creates an armor material for testite with these properties.
-(defarmormaterial testite-armor 16 {:helmet 3
-                                    :chestplate 8
-                                    :leggings 6
-                                    :boots 3} 30)
-
-;Creates a pair of test boots.
-(defarmor test-boots testite-armor :boots
-  :unlocalized-name "test-boots"
-  :creative-tab tab-test-mod)
-
-;Creates a simple food item for testing.
-(deffood test-nom 5 0.8
-  :unlocalized-name "test-nom"
-  :creative-tab tab-test-mod)
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-property})

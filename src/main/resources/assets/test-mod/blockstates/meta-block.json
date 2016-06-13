@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "color=black": { "model": "test-mod:meta-block-black" },
+    "color=red": { "model": "test-mod:meta-block-red" },
+    "color=green": { "model": "test-mod:meta-block-green" },
+    "color=blue": { "model": "test-mod:meta-block-blue" },
+    "color=yellow": { "model": "test-mod:meta-block-yellow" },
+    "color=purple": { "model": "test-mod:meta-block-purple" }
+  }
+}

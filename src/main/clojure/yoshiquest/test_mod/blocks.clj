@@ -1,180 +1,118 @@
 (ns yoshiquest.test-mod.blocks
   (:require
-   [forge-clj.blocks :refer [defblock defblockitem]]
-   [forge-clj.util :refer [remote? itemstack printchat drop-items get-tile-entity-at open-gui]]
-   [yoshiquest.test-mod.items :refer [test-item]]
-   [yoshiquest.test-mod.tab :refer [tab-test-mod]]
-   [yoshiquest.test-mod.tileentities :refer [new-tile-block-entity new-render-block-entity new-test-model-entity new-test-inventory-entity]])
+    [forge-clj.blocks :refer [defblock defitemblock get-state]]
+    [forge-clj.util :refer [itemstack remote? get-tile-entity-at printchat drop-items open-gui]]
+    [yoshiquest.test-mod.tileentities :refer [new-tile-block-entity new-render-block-entity new-test-model-entity new-test-inventory-entity]])
   (:import
-   [net.minecraft.block Block]))
+    [net.minecraft.block Block]
+    [net.minecraft.creativetab CreativeTabs]
+    [net.minecraft.item ItemBlock ItemStack]
+    [net.minecraft.util BlockPos]))
 
-;Creates a simple test block with a light level of 1.0, and adds it to the "block" tab in creative mode.
 (defblock test-block
-  :block-name "test-block"
-  :override {:get-item-dropped (constantly test-item)}
-  :hardness 0.5
-  :creative-tab tab-test-mod
-  :light-level (float 1.0)
-  :step-sound Block/soundTypeStone
-  :block-texture-name "test-mod:test-block")
+          :hardness 0.5
+          :creative-tab CreativeTabs/tabBlock
+          :light-level (float 1.0)
+          :step-sound Block/soundTypeStone)
 
-;Was used to test the class generation version of defobj and variants.
-;(defblock test-block
-;  :block-name "test-block"
-;  :override {:get-item-dropped (constantly test-item)}
-;  :hardness 0.5
-;  :creative-tab tab-test-mod
-;  :light-level (float 1.0)
-;  :step-sound Block/soundTypeStone
-;  :fields {:texture-name "test-mod:test-block"}
-;  :class true)
+(defblock meta-block
+          :hardness 0.5
+          :creative-tab CreativeTabs/tabBlock
+          :step-sound Block/soundTypeCloth
+          :state {:color [:black :red :green :blue :yellow :purple]}
+          :override {:get-sub-blocks (fn [item _ ^java.util.List list]
+                                       (dorun (map #(.add list (itemstack item 1 %1)) (range 6))))
+                     :damage-dropped (fn [state]
+                                       (.getMetaFromState ^Block this state))})
 
-;The following creates another test block, this time with a different texture on each side.
-;This stores the icons in the "icons" atom, registers them with the register-multiblock-icons function,
-;and then obtains the respective icon using the get-multiblock-icon function.
+(defitemblock meta-block-item meta-block
+              :max-damage 0
+              :has-subtypes true
+              :override {:get-metadata (fn [istack]
+                                         (if (instance? ItemStack istack)
+                                           (.getItemDamage ^ItemStack istack)
+                                           istack))
+                         :get-unlocalized-name (fn [items]
+                                                 (let [this ^ItemBlock this]
+                                                   (str (proxy-super getUnlocalizedName items) "-" (name (:color (get-state meta-block items))))))})
 
-;This stores the icons for the block (as well as the metablock further on).
-(def icons (atom {}))
+(defblock facing-meta-block
+          :hardness 0.5
+          :creative-tab CreativeTabs/tabBlock
+          :step-sound Block/soundTypeCloth
+          :state {:color [:red :green]
+                  :facing [:up :down]}
+          :override {:get-sub-blocks (fn [item _ ^java.util.List list]
+                                       (dorun (map #(.add list (itemstack item 1 %1)) (range 4))))
+                     :damage-dropped (fn [state]
+                                       (.getMetaFromState ^Block this state))})
 
-;Realize that I used the ^ symbol here to supply a type for reg.
-;If you have a forge object being passed in as an argument,
-;and need to call a non-static method on that argument,
-;then be sure to do this. Otherwise, clojure will resolve the call at run-time,
-;rather than compile-time, resulting in the name not getting reobfuscated.
-(defn register-multiblock-icons [^net.minecraft.client.renderer.texture.IIconRegister reg]
-  (let [names (map (partial str "test-mod:multiblock_") (range 6))
-        register-icon (fn [iname]
-                        (.registerIcon reg iname))
-        temp-icons (doall (map register-icon names))
-        icon-map (zipmap (range 6) temp-icons)]
-    (reset! icons icon-map)))
+(defitemblock facing-meta-block-item facing-meta-block
+              :max-damage 0
+              :has-subtypes true
+              :override {:get-metadata (fn [istack]
+                                         (if (instance? ItemStack istack)
+                                           (.getItemDamage ^ItemStack istack)
+                                           istack))
+                         :get-unlocalized-name (fn [items]
+                                                 (let [this ^ItemBlock this
+                                                       state (get-state facing-meta-block items)]
+                                                   (str (proxy-super getUnlocalizedName items) "-" (name (:color state)) "-" (name (:facing state)))))})
 
-;Note that for get-multiblock-icon, we have to override both arities of the function, despite only using one,
-;since in the case of overriden methods, the function is called for all types and arities.
-(defn get-multiblock-icon
-  ([side metadata]
-   (get @icons side))
-  ([_ _ _ _ side]
-   (get-multiblock-icon side nil)))
-
-;Finally, this declares the block itself.
-(defblock multiblock
-  :block-name "multiblock"
-  :override {:register-block-icons register-multiblock-icons
-             :get-icon get-multiblock-icon}
-  :hardness 0.5
-  :step-sound Block/soundTypeStone
-  :creative-tab tab-test-mod
-  :block-texture-name "test-mod:multiblock")
-
-;The following is a test to add a block with metadata to minecraft called metablock.
-
-;This is similar to the previous multiblock implementation, except in this case we DO care about the metadata,
-;so we simply do what the normal version does.
-(defn get-metablock-icon
-  ([side metadata]
-   (let [data (get @icons metadata)]
-     (if data
-       data
-       (get @icons 0))))
-  ([^net.minecraft.world.IBlockAccess blockaccess arg1 arg2 arg3 side]
-   (get-metablock-icon side (.getBlockMetadata blockaccess arg1 arg2 arg3))))
-
-;This adds a list of sub blocks to the provided list.
-(defn metablock-sub-blocks [item tab ^java.util.List stacklist]
-  (let [meta-vals (range 6)
-        istacks (map (partial itemstack item 1) meta-vals)
-        addtolist (fn [istack]
-                    (.add stacklist istack))]
-    (doall (map addtolist istacks))))
-
-;Finally, this creates the actual block. Constantly is used since we don't want register-block-icons to do anything,
-;so we just make it always return nil. Damage dropped needs to return the provided argument,
-;so the identity function is used in this case.
-(defblock metablock
-  :block-name "metablock"
-  :override {:register-block-icons (constantly nil)
-             :get-icon get-metablock-icon
-             :damage-dropped identity
-             :get-sub-blocks metablock-sub-blocks}
-  :hardness 0.5
-  :step-sound Block/soundTypeStone
-  :creative-tab tab-test-mod)
-
-;This creates the item version of the block. The metadata? tag will make it an ItemBlockWithMetadata rather than an
-;ItemBlock. Since the name of the core block isn't changing, I simply used the name, an underscore,
-;and the block damage for the name.
-(defblockitem metablockitem metablock
-  :metadata? true
-  :override {:get-unlocalized-name (fn
-                                     ([^net.minecraft.item.ItemStack istack]
-                                      (str "metablock_" (.getItemDamage istack)))
-                                     ([]
-                                      "metablock"))})
-
-;Called on right click. Gets the tile entity at the position, prints the value of the "something" field, and
-;increases the "something" field by one.
-(defn on-tile-block-click [world x y z player _ _ _ _]
+(defn on-tile-block-click [world block-pos state player side hit-x hit-y hit-z]
   (when (not (remote? world))
-    (let [tile-entity (get-tile-entity-at world x y z)]
+    (let [tile-entity (get-tile-entity-at world (.getX ^BlockPos block-pos) (.getY ^BlockPos block-pos) (.getZ ^BlockPos block-pos))]
       (printchat player (str "Something: " (:something tile-entity)))
       (assoc! tile-entity :something (inc (:something tile-entity)))))
   false)
 
-;Makes a block container with the tile-block-entity as the tile entity it uses.
 (defblock tile-block
-  :block-name "tile-block"
-  :container? true
-  :override {:create-new-tile-entity new-tile-block-entity
-             :on-block-activated on-tile-block-click}
-  :hardness 0.5
-  :step-sound Block/soundTypeStone
-  :creative-tab tab-test-mod)
+          :container? true
+          :override {:create-new-tile-entity new-tile-block-entity
+                     :on-block-activated on-tile-block-click}
+          :hardness 0.5
+          :step-sound Block/soundTypeStone
+          :creative-tab CreativeTabs/tabBlock)
 
-(defn store-rotation [world x y z ^net.minecraft.entity.EntityLivingBase player _]
-  (assoc! (get-tile-entity-at world x y z) :pitch (.-rotationPitch player) :yaw (.-rotationYaw player)))
+(defn store-rotation [world ^BlockPos block-pos block-state ^net.minecraft.entity.EntityLivingBase player istack]
+  (assoc! (get-tile-entity-at world (.getX block-pos) (.getY block-pos) (.getZ block-pos)) :pitch (.-rotationPitch player) :yaw (.-rotationYaw player)))
 
 (defblock render-block
-  :block-name "render-block"
-  :container? true
-  :override {:create-new-tile-entity new-render-block-entity
-             :is-opaque-cube (constantly false)
-             :render-as-normal-block (constantly false)
-             :get-render-type (constantly -1)
-             :on-block-placed-by store-rotation}
-  :hardness 0.5
-  :light-opacity 0
-  :step-sound Block/soundTypeStone
-  :creative-tab tab-test-mod)
+          :container? true
+          :override {:create-new-tile-entity new-render-block-entity
+                     :is-opaque-cube (constantly false)
+                     :render-as-normal-block (constantly false)
+                     :on-block-placed-by store-rotation}
+          :hardness 0.5
+          :light-opacity 0
+          :step-sound Block/soundTypeStone
+          :creative-tab CreativeTabs/tabBlock)
 
 (defblock test-model
-  :block-name "test-model"
-  :container? true
-  :override {:create-new-tile-entity new-test-model-entity
-             :is-opaque-cube (constantly false)
-             :render-as-normal-block (constantly false)
-             :get-render-type (constantly -1)}
-  :hardness 0.5
-  :light-opacity 0
-  :step-sound Block/soundTypeStone
-  :creative-tab tab-test-mod)
+          :container? true
+          :override {:create-new-tile-entity new-test-model-entity
+                     :is-opaque-cube (constantly false)
+                     :render-as-normal-block (constantly false)}
+          :hardness 0.5
+          :light-opacity 0
+          :step-sound Block/soundTypeStone
+          :creative-tab CreativeTabs/tabBlock)
 
 (def mod-instance (atom nil))
 
-(defn open-test-inventory-gui [world x y z player _ _ _ _]
+(defn open-test-inventory-gui [world ^BlockPos pos state player side hit-x hit-y hit-z]
   (if (not (remote? world))
-    (open-gui player (deref mod-instance) 0 world x y z))
+    (open-gui player (deref mod-instance) 0 world (.getX pos) (.getY pos) (.getZ pos)))
   true)
 
 (defblock test-inventory
-  :block-name "test-inventory"
-  :container? true
-  :override {:create-new-tile-entity new-test-inventory-entity
-             :break-block (fn [world x y z par5 par6]
-                            (drop-items world x y z)
-                            (let [this ^Block this]
-                              (proxy-super breakBlock world x y z par5 par6)))
-             :on-block-activated open-test-inventory-gui}
-  :hardness 0.5
-  :step-sound Block/soundTypeStone
-  :creative-tab tab-test-mod)
+          :container? true
+          :override {:create-new-tile-entity new-test-inventory-entity
+                     :break-block (fn [world ^BlockPos pos state]
+                                    (drop-items world (.getX pos) (.getY pos) (.getZ pos))
+                                    (let [this ^Block this]
+                                      (proxy-super breakBlock world pos state)))
+                     :on-block-activated open-test-inventory-gui}
+          :hardness 0.5
+          :step-sound Block/soundTypeStone
+          :creative-tab CreativeTabs/tabBlock)
