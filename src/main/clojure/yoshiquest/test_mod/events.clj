@@ -3,7 +3,7 @@
     [forge-clj.registry :refer [register]]
     [forge-clj.event :refer [gen-events]]
     [forge-clj.util :refer [with-prefix]]
-    [yoshiquest.test-mod.entity-properties :refer [test-properties]]
+    [yoshiquest.test-mod.entity-properties :refer [test-properties mana-property]]
     )
   (:import
     [net.minecraftforge.event.entity EntityEvent$EntityConstructing]
@@ -23,4 +23,5 @@
              (defn entityConstructingEvent [this ^EntityEvent$EntityConstructing event]
                (let [entity (.-entity event)]
                  (when (and (instance? net.minecraft.entity.player.EntityPlayer entity) (nil? (.getExtendedProperties entity "test-properties")))
-                   (register entity "test-properties" (.newInstance ^Class test-properties))))))
+                   (register entity "test-properties" (.newInstance ^Class test-properties))
+                   (register entity "mana-property" (.newInstance ^Class mana-property))))))

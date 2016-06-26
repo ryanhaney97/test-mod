@@ -58,6 +58,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 	compile 'org.clojure:clojure:1.8.0'
+	compile('org.clojure:core.async:0.2.382')
+	{
+		exclude group: 'org.ow2.asm'
+	}
 	compile files("forge_clj-dev.jar")
 }
 

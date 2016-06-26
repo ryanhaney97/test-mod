@@ -2,8 +2,8 @@
   (:require
     [forge-clj.items :refer [defitem deftool defarmor deffood]]
     [forge-clj.util :refer [remote? get-extended-properties printchat]]
-    [forge-clj.network :refer [send-to-server]]
-    [yoshiquest.test-mod.network :refer [test-mod-server-network]])
+    [forge-clj.network :refer [fc-network-send fc-network-receive]]
+    [clojure.core.async :refer [chan go >!! <! sub]])
   (:import
     [net.minecraft.creativetab CreativeTabs]
     [net.minecraft.potion Potion]))
@@ -31,10 +31,28 @@
 (deffood test-food 4 0.7
          :potion-effect [(.-id Potion/confusion) 20 0 1.0])
 
+(let [net-sub (sub fc-network-receive :message (chan))]
+  (go
+    (while true
+      (let [nbt-map (<! net-sub)]
+        (printchat (:player nbt-map) (str "Server: " (:message nbt-map)))))))
+
+(let [net-sub (sub fc-network-receive :other-message (chan))]
+  (go
+    (while true
+      (let [nbt-map (<! net-sub)]
+        (printchat (:player nbt-map) (str "Client: " (:message nbt-map)))))))
+
 ;Right click function for the net-test item. Simply sends a message to the server.
 (defn right-click-send [istack world player]
   (if (remote? world)
-    (send-to-server test-mod-server-network {:message "Hello World"}))
+    (>!! fc-network-send {:message "Hello World"
+                          :send :server
+                          :id :message})
+    (>!! fc-network-send {:message "Goodbye World"
+                          :send :to
+                          :target player
+                          :id :other-message}))
   istack)
 
 ;Test item to test the network system.
@@ -55,3 +73,25 @@
 (defitem property-test
          :creative-tab CreativeTabs/tabMisc
          :override {:on-item-right-click right-click-property})
+
+(defn right-click-mana [istack world player]
+  (let [mana-property (get-extended-properties player "mana-property")]
+    (if (remote? world)
+      (assoc! mana-property :mana (inc (:mana mana-property)))
+      (printchat player (str "Mana: " (:mana mana-property))))
+    istack))
+
+(defitem mana-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-mana})
+
+(defn right-click-reverse-mana [istack world player]
+  (let [mana-property (get-extended-properties player "mana-property")]
+    (if (remote? world)
+      (printchat player (str "Mana: " (:mana mana-property)))
+      (assoc! mana-property :mana (dec (:mana mana-property))))
+    istack))
+
+(defitem reverse-mana-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-reverse-mana})
