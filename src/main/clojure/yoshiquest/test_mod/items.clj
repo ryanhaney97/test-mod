@@ -73,3 +73,25 @@
 (defitem property-test
          :creative-tab CreativeTabs/tabMisc
          :override {:on-item-right-click right-click-property})
+
+(defn right-click-mana [istack world player]
+  (let [mana-property (get-extended-properties player "mana-property")]
+    (if (remote? world)
+      (assoc! mana-property :mana (inc (:mana mana-property)))
+      (printchat player (str "Mana: " (:mana mana-property))))
+    istack))
+
+(defitem mana-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-mana})
+
+(defn right-click-reverse-mana [istack world player]
+  (let [mana-property (get-extended-properties player "mana-property")]
+    (if (remote? world)
+      (printchat player (str "Mana: " (:mana mana-property)))
+      (assoc! mana-property :mana (dec (:mana mana-property))))
+    istack))
+
+(defitem reverse-mana-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-reverse-mana})

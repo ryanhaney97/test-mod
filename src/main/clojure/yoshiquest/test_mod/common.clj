@@ -2,7 +2,7 @@
   (:require
     [forge-clj.registry :refer [register]]
     [yoshiquest.test-mod.blocks :refer [test-block meta-block meta-block-item facing-meta-block facing-meta-block-item tile-block render-block test-model mod-instance test-inventory]]
-    [yoshiquest.test-mod.items :refer [test-item test-shovel test-boots test-food net-test property-test]]
+    [yoshiquest.test-mod.items :refer [test-item test-shovel test-boots test-food net-test property-test mana-test reverse-mana-test]]
     [yoshiquest.test-mod.events :refer [common-event-handler]]
     [yoshiquest.test-mod.world :refer [test-biome test-gen]]
     [yoshiquest.test-mod.tileentities :refer [tile-block-entity render-block-entity test-model-entity test-inventory-entity]]
@@ -29,6 +29,8 @@
   (register render-block "render-block")
   (register test-model "test-model")
   (register test-inventory "test-inventory")
+  (register mana-test "mana-test")
+  (register reverse-mana-test "reverse-mana-test")
   (register common-event-handler)
   (register this test-mod-gui-handler)
   (register test-gen)
