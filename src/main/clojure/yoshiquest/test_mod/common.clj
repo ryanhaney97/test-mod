@@ -4,6 +4,7 @@
     [yoshiquest.test-mod.blocks :refer [test-block meta-block meta-block-item facing-meta-block facing-meta-block-item tile-block render-block test-model mod-instance test-inventory]]
     [yoshiquest.test-mod.items :refer [test-item test-shovel test-boots test-food net-test property-test mana-test reverse-mana-test]]
     [yoshiquest.test-mod.events :refer [common-event-handler]]
+    [yoshiquest.test-mod.entity :refer [test-mob]]
     [yoshiquest.test-mod.world :refer [test-biome test-gen]]
     [yoshiquest.test-mod.tileentities :refer [tile-block-entity render-block-entity test-model-entity test-inventory-entity]]
     [yoshiquest.test-mod.ui :refer [test-mod-gui-handler]]))
@@ -33,5 +34,6 @@
   (register reverse-mana-test "reverse-mana-test")
   (register common-event-handler)
   (register this test-mod-gui-handler)
+  (register test-mob "test-mob" 0 this 80 3 false 0xFFFFFF 0x000000)
   (register test-gen)
   (register test-biome [:cool :warm] [:magical :sparse] 20))

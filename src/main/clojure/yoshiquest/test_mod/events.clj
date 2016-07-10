@@ -3,12 +3,9 @@
     [forge-clj.registry :refer [register]]
     [forge-clj.event :refer [gen-events]]
     [forge-clj.util :refer [with-prefix]]
-    [yoshiquest.test-mod.entity-properties :refer [test-properties mana-property]]
-    )
+    [yoshiquest.test-mod.entity :refer [test-properties mana-property]])
   (:import
-    [net.minecraftforge.event.entity EntityEvent$EntityConstructing]
-    )
-  )
+    [net.minecraftforge.event.entity EntityEvent$EntityConstructing]))
 
 ;Creates an event handler with the PlayerPickupXpEvent, and the EntityConstructing event.
 ;The full package names are required if not using a forge or fml event.
