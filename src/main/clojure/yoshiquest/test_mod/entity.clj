@@ -11,4 +11,5 @@
   :fields {:mana 0}
   :sync-data [:mana])
 
-(defmob test-mob)
+(defmob test-mob
+        :attributes {:max-health 5})
