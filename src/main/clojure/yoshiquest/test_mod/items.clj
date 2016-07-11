@@ -3,7 +3,7 @@
     [forge-clj.items :refer [defitem deftool defarmor deffood]]
     [forge-clj.util :refer [remote? get-extended-properties printchat]]
     [forge-clj.network :refer [fc-network-send fc-network-receive]]
-    [clojure.core.async :refer [chan go >!! <! sub]])
+    [clojure.core.async :refer [chan go >!! <! sub timeout]])
   (:import
     [net.minecraft.creativetab CreativeTabs]
     [net.minecraft.potion Potion]))
@@ -78,7 +78,9 @@
   (let [mana-property (get-extended-properties player "mana-property")]
     (if (remote? world)
       (assoc! mana-property :mana (inc (:mana mana-property)))
-      (printchat player (str "Mana: " (:mana mana-property))))
+      (go
+        (<! (timeout 100))
+        (printchat player (str "Mana: " (:mana mana-property)))))
     istack))
 
 (defitem mana-test
@@ -88,10 +90,23 @@
 (defn right-click-reverse-mana [istack world player]
   (let [mana-property (get-extended-properties player "mana-property")]
     (if (remote? world)
-      (printchat player (str "Mana: " (:mana mana-property)))
+      (go
+        (<! (timeout 100))
+        (printchat player (str "Mana: " (:mana mana-property))))
       (assoc! mana-property :mana (dec (:mana mana-property))))
     istack))
 
 (defitem reverse-mana-test
          :creative-tab CreativeTabs/tabMisc
          :override {:on-item-right-click right-click-reverse-mana})
+
+(defn right-click-print-mana [istack world player]
+  (let [mana-property (get-extended-properties player "mana-property")]
+    (if (remote? world)
+      (printchat player (str "Mana (Client): " (:mana mana-property)))
+      (printchat player (str "Mana (Server): " (:mana mana-property))))
+    istack))
+
+(defitem print-mana-test
+         :creative-tab CreativeTabs/tabMisc
+         :override {:on-item-right-click right-click-print-mana})
