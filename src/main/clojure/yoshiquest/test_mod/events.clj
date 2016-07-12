@@ -25,17 +25,15 @@
                    (do
                      (register entity "test-properties" (.newInstance ^Class test-properties))
                      (register entity "mana-property" (.newInstance ^Class mana-property)))
-                   ;(if (and (instance? net.minecraft.entity.passive.EntitySheep entity) (nil? (get-extended-properties entity "mana-property")))
-                   ;  (register entity "mana-property" (.newInstance ^Class mana-property)))
-                   )))
+                   (if (and (instance? net.minecraft.entity.passive.EntitySheep entity) (nil? (get-extended-properties entity "mana-property")))
+                     (register entity "mana-property" (.newInstance ^Class mana-property))))))
 
              (defn interactEvent [this ^EntityInteractEvent event]
                (let [entity (.-target event)
                      player (.-entityPlayer event)
                      world (.-worldObj player)]
-                 ;(if (instance? net.minecraft.entity.passive.EntitySheep entity)
-                 ;  (let [properties (get-extended-properties entity "mana-property")]
-                 ;    (if (remote? world)
-                 ;      (assoc! properties :mana (inc (:mana properties)))
-                 ;      (printchat player (str "Sheep Mana: " (:mana properties))))))
-                 )))
+                 (if (instance? net.minecraft.entity.passive.EntitySheep entity)
+                   (let [properties (get-extended-properties entity "mana-property")]
+                     (if (remote? world)
+                       (assoc! properties :mana (inc (:mana properties)))
+                       (printchat player (str "Sheep Mana: " (:mana properties)))))))))
