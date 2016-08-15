@@ -48,9 +48,9 @@
                (when (or (instance? net.minecraft.entity.player.EntityPlayer (.-target event)) (instance? net.minecraft.entity.passive.EntitySheep (.-target event)))
                  (let [entity (.-target event)
                        mana-property (get-extended-properties entity "mana-property")]
-                   (sync-data mana-property))))
+                   (sync-data mana-property (.-entityPlayer event)))))
 
              (defn loginEvent [this ^PlayerEvent$PlayerLoggedInEvent event]
                (let [entity (.-player event)
                      mana-property (get-extended-properties entity "mana-property")]
-                 (sync-data mana-property))))
+                 (sync-data mana-property entity))))
