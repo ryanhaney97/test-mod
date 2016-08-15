@@ -2,7 +2,7 @@
   (:require
     [forge-clj.items :refer [defitem deftool defarmor deffood]]
     [forge-clj.util :refer [remote? get-extended-properties printchat]]
-    [forge-clj.network :refer [fc-network-send fc-network-receive]]
+    [forge-clj.network :refer [fc-network-send fc-network-receive net-listen]]
     [clojure.core.async :refer [chan go >!! <! sub timeout]])
   (:import
     [net.minecraft.creativetab CreativeTabs]
@@ -31,17 +31,14 @@
 (deffood test-food 4 0.7
          :potion-effect [(.-id Potion/confusion) 20 0 1.0])
 
-(let [net-sub (sub fc-network-receive :message (chan))]
-  (go
-    (while true
-      (let [nbt-map (<! net-sub)]
-        (printchat (:player nbt-map) (str "Server: " (:message nbt-map)))))))
+(net-listen :message
+            (fn [nbt-map]
+              (printchat (:player nbt-map) (str "Server: " (:message nbt-map)))))
 
-(let [net-sub (sub fc-network-receive :other-message (chan))]
-  (go
-    (while true
-      (let [nbt-map (<! net-sub)]
-        (printchat (:player nbt-map) (str "Client: " (:message nbt-map)))))))
+
+(net-listen :other-message
+            (fn [nbt-map]
+              (printchat (:player nbt-map) (str "Client: " (:message nbt-map)))))
 
 ;Right click function for the net-test item. Simply sends a message to the server.
 (defn right-click-send [istack world player]
