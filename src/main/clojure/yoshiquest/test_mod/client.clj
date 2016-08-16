@@ -6,12 +6,14 @@
     [yoshiquest.test-mod.tileentities :refer [render-block-entity test-model-entity]]
     [yoshiquest.test-mod.client.renderers.render-block-renderer :refer [render-block-tile-renderer]]
     [yoshiquest.test-mod.client.renderers.test-model-renderer :refer [test-model-tile-renderer]]
-    [yoshiquest.test-mod.client.ui :refer [init-client-gui]]))
+    [yoshiquest.test-mod.client.ui :refer [init-client-gui]]
+    [yoshiquest.test-mod.client.network :refer [test-network-client-init]]))
 
 (def meta-block-variants ["test-mod:meta-block-black" "test-mod:meta-block-red" "test-mod:meta-block-green" "test-mod:meta-block-blue" "test-mod:meta-block-yellow" "test-mod:meta-block-purple"])
 (def facing-meta-block-variants ["test-mod:facing-meta-block-red-up" "test-mod:facing-meta-block-green-up" "test-mod:facing-meta-block-red-down" "test-mod:facing-meta-block-green-down"])
 
 (defn client-pre-init [this event]
+  (test-network-client-init)
   (init-client-gui)
   (add-variants meta-block-item meta-block-variants)
   (add-variants facing-meta-block-item facing-meta-block-variants)

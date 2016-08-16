@@ -7,10 +7,12 @@
     [yoshiquest.test-mod.entity :refer [test-mob]]
     [yoshiquest.test-mod.world :refer [test-biome test-gen]]
     [yoshiquest.test-mod.tileentities :refer [tile-block-entity render-block-entity test-model-entity test-inventory-entity]]
-    [yoshiquest.test-mod.ui :refer [test-mod-gui-handler]]))
+    [yoshiquest.test-mod.ui :refer [test-mod-gui-handler]]
+    [yoshiquest.test-mod.network :refer [test-network-init]]))
 
 (defn common-pre-init [this _]
   (reset! mod-instance this)
+  (test-network-init)
   (register tile-block-entity "test-mod-tile-block-entity")
   (register render-block-entity "test-mod-render-block-entity")
   (register test-model-entity "test-mod-test-model-entity")
