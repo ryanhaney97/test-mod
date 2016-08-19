@@ -14,4 +14,18 @@
   :network test-network)
 
 (defmob test-mob
-        :attributes {:max-health 5})
+        :attributes {:max-health 5
+                     :movement-speed 0.2}
+        :ai [{:priority 0
+              :type net.minecraft.entity.ai.EntityAISwimming}
+             {:priority 1
+              :type net.minecraft.entity.ai.EntityAIPanic
+              :args [2.0]}
+             {:priority 2
+              :type net.minecraft.entity.ai.EntityAIWander
+              :args [1.0]}
+             {:priority 3
+              :type net.minecraft.entity.ai.EntityAIWatchClosest
+              :args [net.minecraft.entity.player.EntityPlayer (float 6.0)]}
+             {:priority 4
+              :type net.minecraft.entity.ai.EntityAILookIdle}])
