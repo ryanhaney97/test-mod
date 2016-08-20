@@ -16,6 +16,7 @@
 (defcreature test-mob
              :attributes {:max-health 5
                           :movement-speed 0.2}
+             :clean-ai? true
              :ai [{:priority 0
                    :type net.minecraft.entity.ai.EntityAISwimming}
                   {:priority 1
