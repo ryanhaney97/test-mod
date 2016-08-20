@@ -28,4 +28,10 @@
               :type net.minecraft.entity.ai.EntityAIWatchClosest
               :args [net.minecraft.entity.player.EntityPlayer (float 6.0)]}
              {:priority 4
-              :type net.minecraft.entity.ai.EntityAILookIdle}])
+              :type net.minecraft.entity.ai.EntityAILookIdle}
+             {:priority 5
+              :compatible :all
+              :execute? (constantly true)
+              :start (fn [entity]
+                       nil)
+              :continue (constantly false)}])
