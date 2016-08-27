@@ -1,6 +1,7 @@
 (ns yoshiquest.test-mod.entity
   (:require
     [forge-clj.entity :refer [defextendedproperties defcreature]]
+    [forge-clj.util :refer [remote? wait printchat]]
     [yoshiquest.test-mod.network :refer [test-network]]))
 
 ;Creates extended properties called test-properties with the field "tacopower"
@@ -16,6 +17,8 @@
 (defcreature test-mob
              :attributes {:max-health 5
                           :movement-speed 0.2}
+             :fields {:something 0}
+             :sync-data [:something]
              :clean-ai? true
              :ai [{:priority 0
                    :type net.minecraft.entity.ai.EntityAISwimming}
@@ -36,3 +39,11 @@
                    :start (fn [entity]
                             nil)
                    :continue (constantly false)}])
+
+(defn test-mob-interact [this ^net.minecraft.entity.player.EntityPlayer player]
+  (let [world (.-worldObj player)]
+    (if (remote? world)
+      (wait 100
+        (fn [] (printchat player (:something this))))
+      (assoc! this :something (inc (:something this)))))
+  true)

@@ -2,13 +2,12 @@
   (:require
     [forge-clj.registry :refer [register]]
     [forge-clj.event :refer [gen-events]]
-    [forge-clj.entity :refer [add-extended-properties]]
-    [forge-clj.util :refer [with-prefix printchat get-extended-properties remote? sync-data]]
+    [forge-clj.entity :refer [add-extended-properties init-sync]]
+    [forge-clj.util :refer [with-prefix printchat get-extended-properties remote?]]
     [clojure.core.async :refer [go timeout <!]]
     [yoshiquest.test-mod.entity :refer [test-properties mana-property]])
   (:import
-    [net.minecraftforge.event.entity.player EntityInteractEvent PlayerEvent$StartTracking]
-    [net.minecraftforge.fml.common.gameevent PlayerEvent$PlayerLoggedInEvent]))
+    [net.minecraftforge.event.entity.player EntityInteractEvent]))
 
 ;Creates an event handler with the PlayerPickupXpEvent, and the EntityConstructing event.
 ;The full package names are required if not using a forge or fml event.
@@ -32,14 +31,9 @@
                                                     (<! (timeout 100))
                                                     (printchat player (str "Sheep Mana: " (:mana properties)))))))))}
 
-            :player-event.start-tracking {:fn (fn [^PlayerEvent$StartTracking event]
-                                                (let [entity (.-target event)
-                                                      player (.-entityPlayer event)]
-                                                  (when (or (instance? net.minecraft.entity.player.EntityPlayer entity) (instance? net.minecraft.entity.passive.EntitySheep entity))
-                                                    (let [mana-property (get-extended-properties entity "mana-property")]
-                                                      (sync-data mana-property player)))))}
+            :player-event.start-tracking {:fn (fn [event]
+                                                (init-sync event [:player :sheep] "mana-property")
+                                                (init-sync event))}
 
-            :player-event.player-logged-in-event {:fn (fn [^PlayerEvent$PlayerLoggedInEvent event]
-                                                        (let [entity (.-player event)
-                                                              mana-property (get-extended-properties entity "mana-property")]
-                                                          (sync-data mana-property entity)))})
+            :player-event.player-logged-in-event {:fn (fn [event]
+                                                        (init-sync event "mana-property"))})
